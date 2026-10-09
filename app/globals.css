@@ -1,0 +1,506 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+/* Day / Night Theme Tokens */
+:root {
+  --bg-gradient: radial-gradient(circle at 50% 10%, #ffd5bf 0%, #ffebb3 28%, #fed7aa 52%, #c2ebff 80%, #99c7fb 100%);
+  --nav-bg: rgba(255, 255, 255, 0.65);
+  --nav-border: rgba(255, 255, 255, 0.85);
+  --nav-shadow: 0 20px 40px rgba(251, 146, 60, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  --nav-text: #1e293b;
+  --pill-bg: rgba(255, 255, 255, 0.92);
+  --pill-border: rgba(255, 255, 255, 0.95);
+  --pill-shadow: 0 4px 16px rgba(251, 146, 60, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="dark"],
+.dark {
+  --bg-gradient: radial-gradient(circle at 50% 15%, #3b1d42 0%, #1e1338 35%, #0f1026 70%, #070913 100%);
+  --nav-bg: rgba(18, 20, 32, 0.72);
+  --nav-border: rgba(255, 255, 255, 0.14);
+  --nav-shadow: 0 24px 48px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  --nav-text: #f8fafc;
+  --pill-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --pill-border: rgba(255, 255, 255, 0.24);
+  --pill-shadow: 0 0 24px rgba(59, 130, 246, 0.35),
+                 inset 0 1px 1.5px rgba(255, 255, 255, 0.6),
+                 inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+}
+
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  min-height: 100vh;
+  transition: background 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+/* ==========================================================================
+   LIQUID GLASS NAVBAR & CONTROLS
+   ========================================================================== */
+.liquid-nav {
+  background: var(--nav-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--nav-border);
+  box-shadow: var(--nav-shadow);
+  position: relative;
+  overflow: visible;
+}
+
+.liquid-glare {
+  position: absolute;
+  top: 0;
+  left: 0%;
+  right: 0%;
+  height: 80%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0.65;
+  transition: opacity 0.3s ease;
+}
+
+.liquid-nav:hover .liquid-glare {
+  opacity: 1;
+}
+
+.liquid-pill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--pill-shadow);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sun / Moon Rotation */
+.sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="dark"] .sun,
+.dark .sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
+}
+
+[data-theme="dark"] .moon,
+.dark .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* ==========================================================================
+   3D HORIZONTAL FLIP CARD (REGISTER ROLE TOGGLE)
+   ========================================================================== */
+.flip-container {
+  perspective: 1200px;
+}
+
+.flipper {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.flip-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.flip-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+/* ==========================================================================
+   FOOTER TEXT & "SIGN UP / SIGN IN" ACTION LINK VISIBILITY
+   ========================================================================== */
+
+/* 1. Day Mode Footer Text & Links */
+.cl-footerActionText {
+  color: #475569 !important;
+  font-weight: 500 !important;
+}
+
+.cl-footerActionLink {
+  color: #ea580c !important;
+  font-weight: 700 !important;
+}
+
+.cl-footerActionLink:hover {
+  color: #c2410c !important;
+  text-decoration: underline !important;
+}
+
+/* 2. Dark Mode Footer Text & Links */
+[data-theme="dark"] .cl-footer,
+.dark .cl-footer {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .cl-footerActionText,
+.dark .cl-footerActionText {
+  color: #cbd5e1 !important; /* Crisp light slate */
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] .cl-footerActionLink,
+.dark .cl-footerActionLink {
+  color: #fb7185 !important; /* Vibrant high-contrast rose */
+  font-weight: 700 !important;
+  text-shadow: 0 0 12px rgba(251, 113, 133, 0.35);
+}
+
+[data-theme="dark"] .cl-footerActionLink:hover,
+.dark .cl-footerActionLink:hover {
+  color: #fda4af !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   DUAL TANK BATTLE & BOMB COLLISION KEYFRAMES
+   ========================================================================== */
+@keyframes left-tank-sequence {
+  0% { transform: translateX(-150%); opacity: 1; }
+  38% { transform: translateX(0%); }
+  44% { transform: translateX(-24px); }
+  54% { transform: translateX(0%); }
+  75% { opacity: 1; transform: translateX(0%); }
+  100% { opacity: 0; transform: translateX(-80px); visibility: hidden; pointer-events: none; }
+}
+
+@keyframes right-tank-sequence {
+  0% { transform: scaleX(-1) translateX(-150%); opacity: 1; }
+  38% { transform: scaleX(-1) translateX(0%); }
+  44% { transform: scaleX(-24px); }
+  54% { transform: scaleX(-1) translateX(0%); }
+  75% { opacity: 1; transform: scaleX(-1) translateX(0%); }
+  100% { opacity: 0; transform: scaleX(-1) translateX(-80px); visibility: hidden; pointer-events: none; }
+}
+
+@keyframes tank-wheel-roll {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(720deg); }
+}
+
+@keyframes muzzle-flash-burst {
+  0%, 43% { opacity: 0; transform: scale(0.2); }
+  44% { opacity: 1; transform: scale(1.6); }
+  50% { opacity: 0; transform: scale(0.1); }
+  100% { opacity: 0; }
+}
+
+@keyframes left-bomb-track-flight {
+  0%, 43% { opacity: 0; left: 0%; transform: translateY(-50%) scale(0.4) rotate(0deg); }
+  44% { opacity: 1; left: 0%; transform: translateY(-50%) scale(0.9) rotate(0deg); }
+  64% { opacity: 1; left: 92%; transform: translateY(-50%) scale(1.1) rotate(15deg); }
+  67% { opacity: 1; left: 100%; transform: translateY(-50%) scale(1.3) rotate(0deg); }
+  68% { opacity: 0; left: 100%; transform: translateY(-50%) scale(0.2); }
+  100% { opacity: 0; left: 100%; transform: translateY(-50%) scale(0); visibility: hidden; }
+}
+
+@keyframes right-bomb-track-flight {
+  0%, 43% { opacity: 0; right: 0%; transform: translateY(-50%) scale(0.4) rotate(0deg); }
+  44% { opacity: 1; right: 0%; transform: translateY(-50%) scale(0.9) rotate(0deg); }
+  64% { opacity: 1; right: 92%; transform: translateY(-50%) scale(1.1) rotate(-15deg); }
+  67% { opacity: 1; right: 100%; transform: translateY(-50%) scale(1.3) rotate(0deg); }
+  68% { opacity: 0; right: 100%; transform: translateY(-50%) scale(0.2); }
+  100% { opacity: 0; right: 100%; transform: translateY(-50%) scale(0); visibility: hidden; }
+}
+
+@keyframes collision-detonation {
+  0%, 66% { opacity: 0; transform: scale(0.05); }
+  67% { opacity: 1; transform: scale(0.7); filter: blur(0px); }
+  74% { opacity: 1; transform: scale(2.4); filter: blur(4px); }
+  84% { opacity: 0.8; transform: scale(3.4); filter: blur(12px); }
+  100% { opacity: 0; transform: scale(4.4); filter: blur(24px); visibility: hidden; }
+}
+
+@keyframes battle-stage-fadeout {
+  0%, 75% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+@keyframes card-blast-popout {
+  0%, 66% { opacity: 0; transform: translateY(60px) scale(0.12); filter: blur(16px); }
+  75% { opacity: 1; transform: translateY(-16px) scale(1.03); filter: blur(0); }
+  86% { transform: translateY(4px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.animate-left-tank { animation: left-tank-sequence 5.8s cubic-bezier(0.38, 0.05, 0.22, 1) forwards; }
+.animate-right-tank { animation: right-tank-sequence 5.8s cubic-bezier(0.38, 0.05, 0.22, 1) forwards; }
+.animate-tank-wheel { animation: tank-wheel-roll 5.8s cubic-bezier(0.38, 0.05, 0.22, 1) infinite; transform-origin: center; }
+.animate-muzzle-flash { animation: muzzle-flash-burst 5.8s ease-out forwards; }
+.animate-left-bomb-fly { animation: left-bomb-track-flight 5.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.animate-right-bomb-fly { animation: right-bomb-track-flight 5.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.animate-collision-blast { animation: collision-detonation 5.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: center; }
+.animate-battle-cleanup { animation: battle-stage-fadeout 5.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.animate-tank-card-emerge { animation: card-blast-popout 5.8s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: center top; }
+
+/* ==========================================================================
+   CLERK COMPREHENSIVE DARK MODE & PASSWORD STEP OVERRIDES
+   ========================================================================== */
+
+/* Universal Input Placeholders */
+[data-theme="dark"] input::placeholder,
+.dark input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.55) !important;
+  opacity: 1 !important;
+}
+
+/* Browser Autofill Fix (Prevents solid white box on remembered passwords) */
+[data-theme="dark"] input:-webkit-autofill,
+.dark input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(22, 26, 42, 1) inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Day Mode Inputs */
+.cl-formFieldInput {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1.5px solid rgba(251, 146, 60, 0.35) !important;
+  color: #0f172a !important;
+}
+
+.cl-formFieldInput::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+.cl-formFieldInput:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+/* Dark Mode Inputs */
+[data-theme="dark"] .cl-formFieldInput,
+.dark .cl-formFieldInput {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .cl-formFieldInput::placeholder,
+.dark .cl-formFieldInput::placeholder,
+[data-theme="dark"] .cl-formFieldInput::-webkit-input-placeholder,
+.dark .cl-formFieldInput::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.55) !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .cl-formFieldInput:focus,
+.dark .cl-formFieldInput:focus {
+  border-color: rgba(244, 63, 94, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.3) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Password Visibility Toggle Eye Icon */
+[data-theme="dark"] .cl-formFieldInputShowPasswordButton,
+.dark .cl-formFieldInputShowPasswordButton,
+[data-theme="dark"] .cl-formFieldInputShowPasswordIcon,
+.dark .cl-formFieldInputShowPasswordIcon {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .cl-formFieldInputShowPasswordButton:hover,
+.dark .cl-formFieldInputShowPasswordButton:hover {
+  color: #ffffff !important;
+}
+
+/* Forgot Password & Action Links */
+[data-theme="dark"] .cl-formFieldAction,
+.dark .cl-formFieldAction,
+[data-theme="dark"] .cl-formFieldActionLink,
+.dark .cl-formFieldActionLink,
+[data-theme="dark"] .cl-formFieldAction__password,
+.dark .cl-formFieldAction__password {
+  color: #fb7185 !important;
+}
+
+[data-theme="dark"] .cl-formFieldActionLink:hover,
+.dark .cl-formFieldActionLink:hover {
+  color: #fda4af !important;
+  text-decoration: underline !important;
+}
+
+/* Identity Badge (Selected account pill during password entry) */
+[data-theme="dark"] .cl-identityPreview,
+.dark .cl-identityPreview {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-identityPreviewText,
+.dark .cl-identityPreviewText {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-identityPreviewEditButton,
+.dark .cl-identityPreviewEditButton,
+[data-theme="dark"] .cl-identityPreviewEditButtonIcon,
+.dark .cl-identityPreviewEditButtonIcon {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .cl-identityPreviewEditButton:hover,
+.dark .cl-identityPreviewEditButton:hover {
+  color: #ffffff !important;
+}
+
+/* Back Button & Navigation Links */
+[data-theme="dark"] .cl-backButton,
+.dark .cl-backButton,
+[data-theme="dark"] .cl-headerBackButton,
+.dark .cl-headerBackButton,
+[data-theme="dark"] .cl-headerBackLink,
+.dark .cl-headerBackLink {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .cl-backButton:hover,
+.dark .cl-backButton:hover,
+[data-theme="dark"] .cl-headerBackButton:hover,
+.dark .cl-headerBackButton:hover {
+  color: #ffffff !important;
+}
+
+/* Alternative Sign-In Methods */
+[data-theme="dark"] .cl-alternativeMethodsBlockButton,
+.dark .cl-alternativeMethodsBlockButton {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-alternativeMethodsBlockButton:hover,
+.dark .cl-alternativeMethodsBlockButton:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+[data-theme="dark"] .cl-alternativeMethodsBlockButtonText,
+.dark .cl-alternativeMethodsBlockButtonText,
+[data-theme="dark"] .cl-alternativeMethodsBlockButtonArrow,
+.dark .cl-alternativeMethodsBlockButtonArrow {
+  color: #ffffff !important;
+}
+
+/* 2FA / OTP Code Inputs */
+[data-theme="dark"] .cl-otpCodeFieldInput,
+.dark .cl-otpCodeFieldInput {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-otpCodeFieldInput:focus,
+.dark .cl-otpCodeFieldInput:focus {
+  border-color: rgba(244, 63, 94, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.3) !important;
+}
+
+/* Dark Mode Card Background & Borders */
+[data-theme="dark"] .cl-card,
+.dark .cl-card {
+  background: rgba(14, 18, 30, 0.84) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Headings & Subtitles */
+[data-theme="dark"] .cl-headerTitle,
+.dark .cl-headerTitle {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-headerSubtitle,
+.dark .cl-headerSubtitle,
+[data-theme="dark"] .cl-footerActionText,
+.dark .cl-footerActionText {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .cl-formFieldLabel,
+.dark .cl-formFieldLabel {
+  color: #e2e8f0 !important;
+}
+
+/* Social OAuth Buttons */
+[data-theme="dark"] .cl-socialButtonsBlockButton,
+.dark .cl-socialButtonsBlockButton {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cl-socialButtonsBlockButton:hover,
+.dark .cl-socialButtonsBlockButton:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Dividers */
+[data-theme="dark"] .cl-dividerLine,
+.dark .cl-dividerLine {
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+[data-theme="dark"] .cl-dividerText,
+.dark .cl-dividerText {
+  color: #94a3b8 !important;
+}
+
+/* Footer & Legal Links */
+[data-theme="dark"] .cl-footer,
+.dark .cl-footer {
+  background: transparent !important;
+}
